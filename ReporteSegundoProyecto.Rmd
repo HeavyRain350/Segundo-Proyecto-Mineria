@@ -8,15 +8,9 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-dsTwitter <- read.csv("datasetTwitter.csv", header=TRUE, stringsAsFactors=F)
 
-data.text <- readLines("datasetTwitter.csv")  # Reads data from file into a character vector.
-data.text <- gsub(",{3,}", " ", data.text)
+dsMovies <- read.table(file = 'movie-reviews-dataset.tsv', sep = '\t', header = TRUE)
 
-data <- read.csv(text=data.text, sep = ",", stringsAsFactors=FALSE)
-data.text
-dsTwitter2 <- read.table("datasetTwitter.csv", 
-                 header = TRUE)
 ```
 
 ## R Markdown
