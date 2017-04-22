@@ -1,34 +1,60 @@
 ---
 title: "ReporteSegundoProyecto"
-author: Erik Mejia Hernandez - Julieta Guadalupe Rodriguez Ruíz - Adrian Homero Moreno
-  García
+author: Erik Mejia Hernandez - Julieta Guadalupe Rodriguez Ru?z - Adrian Homero Moreno
+  Garc?a
 date: "21 de abril de 2017"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
+```{r setup, leer}
 knitr::opts_chunk$set(echo = TRUE)
 
-dsMovies <- read.table(file = 'movie-reviews-dataset.tsv', sep = '\t', header = TRUE)
+dsMovies <- read.table(file = 'dsMovies.csv', sep = '\t', header = TRUE)
 
 ```
 
-## R Markdown
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+```{r dsMovies}
+summary(dsMovies)
+str(dsMovies)
 ```
 
-## Including Plots
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r}
+library("tm")
+dsMovies <- VCorpus(VectorSource (dsMovies$text))
+print(dsMovies)
+inspect (dsMovies[1:2])
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r, ver el primer mensaje}
+library("tm")
+as.character(dsMovies[[1]])
+```
+
+```{r, ver multiples mensajes}
+library("tm")
+lapply(dsMovies[1:5], as.character)
+```
+
+
+## Clean Data
+
+```{r, a minusculas}
+dataset_corpus_clean <- tm_map ( dsMovies, content_transformer(tolower))
+as.character(dsMovies[[1]])
+as.character(dataset_corpus_clean[[1]])
+```
+
+```{r, remueve numeros}
+dataset_corpus_clean <- tm_map ( dataset_corpus_clean, removeNumbers)
+as.character(dataset[[5]])
+as.character(dataset_corpus_clean[[5]])
+```
+
+```{r, quitar stop words}
+stopwords()
+datset_corpus_clean <- tm_map ( dataset_corpus_clean, removeWords, stopwords())
+as.character(dataset[[1]])
+as.character(dataset_corpus_clean[[1]])
+```
