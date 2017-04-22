@@ -43,20 +43,66 @@ lapply(dsMovies[1:5], as.character)
 ## Clean Data
 
 ```{r, a minusculas}
-dataset_corpus_clean <- tm_map ( dsMovies, content_transformer(tolower))
+dsMovies_clean <- tm_map ( dsMovies, content_transformer(tolower))
 as.character(dsMovies[[1]])
-as.character(dataset_corpus_clean[[1]])
+as.character(dsMovies_clean[[1]])
 ```
 
 ```{r, remueve numeros}
-dataset_corpus_clean <- tm_map ( dataset_corpus_clean, removeNumbers)
-as.character(dsMovies[[5]])
-as.character(dataset_corpus_clean[[5]])
+dsMovies_clean <- tm_map ( dsMovies_clean, removeNumbers)
+as.character(dsMovies[[6]])
+as.character(dsMovies_clean[[6]])
 ```
 
 ```{r, quitar stop words}
-stopwords()
-datset_corpus_clean <- tm_map ( dataset_corpus_clean, removeWords, stopwords())
-as.character(dsMovies[[1]])
-as.character(dataset_corpus_clean[[1]])
+#stopwords()
+#stopwords('spanish')
+dsMovies_clean <- tm_map ( dsMovies_clean, removeWords, stopwords('spanish'))
+dsMovies_clean <- tm_map ( dsMovies_clean, removeWords, stopwords())
+as.character(dsMovies[[6]])
+as.character(dsMovies_clean[[6]])
+as.character(dsMovies[[1200]])
+as.character(dsMovies_clean[[1200]])
 ```
+
+```{r, quitar puntuaci??n}
+dsMovies_clean <- tm_map ( dsMovies_clean, removePunctuation)
+as.character(dsMovies[[6]])
+as.character(dsMovies_clean[[6]])
+```
+
+
+```{r, quitar espacios en blanco}
+dsMovies_clean <- tm_map ( dsMovies_clean, stripWhitespace)
+as.character(dsMovies[[1576]])
+as.character(dsMovies_clean[[1576]])
+```
+
+## Preparar los datos
+```{r, matriz esparcida}
+dsMovies_dtm <- DocumentTermMatrix (dsMovies_clean)
+dsMovies_dtm
+```
+
+
+```{r}
+dsMovies_dtm_train <- dsMovies_dtm[1:2799, ]
+dsMovies_dtm_test <- dsMovies_dtm[2800:3372, ]
+dsMovies_train_labels <- dsMovies[1:2799, ]$type
+dsMovies_test_labels <- dsMovies[2800:3372, ]$type
+```
+
+```{r}
+library("wordcloud")
+wordcloud(dsMovies_clean, min.freq = 50, random.order = FALSE)
+```
+
+```{r, Palabras m??s significativas de los mensajes negativos y positivos}
+positivo <- subset(dsMovies, type=="positive")
+negativo <- subset(dsMovies, type =="negative")
+
+wordcloud(positivo$message, max.words = 40, scale = c(5, 0.5))
+wordcloud(negativo$message, max.words = 40, scale = c(5, 0.5))
+```
+
+
