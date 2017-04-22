@@ -8,8 +8,8 @@ output: html_document
 
 ```{r setup, leer}
 knitr::opts_chunk$set(echo = TRUE)
-dsMovies <- read.table(file = 'movie-reviews-dataset.tsv', sep = '\t', header = TRUE)
-#dsMovies <- read.csv("dsMovies.csv", stringsAsFactors = FALSE, header = TRUE)
+#dsMovies <- read.table(file = 'movie-reviews-dataset.tsv', sep = '\t', header = TRUE)
+dsMovies <- read.csv("dsMovies.csv", stringsAsFactors = FALSE, header = TRUE)
 ```
 
 
@@ -18,39 +18,39 @@ summary(dsMovies)
 str(dsMovies)
 head(dsMovies)
 tail(dsMovies)
+dsMovies$type <- factor(dsMovies$type)
+table(dsMovies$type)
 ```
 
-
+##Preprocessing
 ```{r}
 library("tm")
-dsMovies <- VCorpus(VectorSource (dsMovies$message))
-print(dsMovies)
-inspect(dsMovies[1:2])
+dsMoviesCorpus <- VCorpus(VectorSource (dsMovies$message))
+print(dsMoviesCorpus)
+inspect(dsMoviesCorpus[1:2])
 ```
 
 ```{r, ver el primer mensaje}
 library("tm")
-print(dsMovies[[1]])
-as.character(dsMovies[[1]])
+print(dsMoviesCorpus[[1]])
+as.character(dsMoviesCorpus[[1]])
 ```
 
 ```{r, ver multiples mensajes}
 library("tm")
-lapply(dsMovies[1:5], as.character)
+lapply(dsMoviesCorpus[1:5], as.character)
 ```
 
 
-## Clean Data
-
 ```{r, a minusculas}
-dsMovies_clean <- tm_map ( dsMovies, content_transformer(tolower))
-as.character(dsMovies[[1]])
+dsMovies_clean <- tm_map ( dsMoviesCorpus, content_transformer(tolower))
+as.character(dsMoviesCorpus[[1]])
 as.character(dsMovies_clean[[1]])
 ```
 
 ```{r, remueve numeros}
 dsMovies_clean <- tm_map ( dsMovies_clean, removeNumbers)
-as.character(dsMovies[[6]])
+as.character(dsMoviesCorpus[[6]])
 as.character(dsMovies_clean[[6]])
 ```
 
@@ -59,22 +59,22 @@ as.character(dsMovies_clean[[6]])
 #stopwords('spanish')
 dsMovies_clean <- tm_map ( dsMovies_clean, removeWords, stopwords('spanish'))
 dsMovies_clean <- tm_map ( dsMovies_clean, removeWords, stopwords())
-as.character(dsMovies[[6]])
+as.character(dsMoviesCorpus[[6]])
 as.character(dsMovies_clean[[6]])
-as.character(dsMovies[[1200]])
+as.character(dsMoviesCorpus[[1200]])
 as.character(dsMovies_clean[[1200]])
 ```
 
 ```{r, quitar puntuaci??n}
 dsMovies_clean <- tm_map ( dsMovies_clean, removePunctuation)
-as.character(dsMovies[[6]])
+as.character(dsMoviesCorpus[[6]])
 as.character(dsMovies_clean[[6]])
 ```
 
 
 ```{r, quitar espacios en blanco}
 dsMovies_clean <- tm_map ( dsMovies_clean, stripWhitespace)
-as.character(dsMovies[[1576]])
+as.character(dsMoviesCorpus[[1576]])
 as.character(dsMovies_clean[[1576]])
 ```
 
@@ -85,24 +85,45 @@ dsMovies_dtm
 ```
 
 
-```{r}
-dsMovies_dtm_train <- dsMovies_dtm[1:2799, ]
-dsMovies_dtm_test <- dsMovies_dtm[2800:3372, ]
-dsMovies_train_labels <- dsMovies[1:2799, ]$type
-dsMovies_test_labels <- dsMovies[2800:3372, ]$type
+```{r, separacion train test}
+dsMovies_dtm_train <- dsMovies_dtm[1:8530, ]
+dsMovies_dtm_test <- dsMovies_dtm[8531:10662, ]
+dsMovies_train_labels <- dsMovies[1:8530,]$type
+dsMovies_test_labels <- dsMovies[8531:10662,]$type
 ```
 
-```{r}
+```{r, wordcloud}
 library("wordcloud")
 wordcloud(dsMovies_clean, min.freq = 50, random.order = FALSE)
 ```
 
-```{r, Palabras m??s significativas de los mensajes negativos y positivos}
-positivo <- subset(dsMovies, type=="positive")
-negativo <- subset(dsMovies, type =="negative")
 
-wordcloud(positivo$message, max.words = 40, scale = c(5, 0.5))
-wordcloud(negativo$message, max.words = 40, scale = c(5, 0.5))
+```{r, frequent words}
+dsMovies_freq_words <- findFreqTerms(dsMovies_dtm_train,50)
+str(dsMovies_freq_words)
+dsMovies_dtm_freq_train <- dsMovies_dtm_train[,dsMovies_freq_words]
+dsMovies_dtm_freq_test <- dsMovies_dtm_test[,dsMovies_freq_words]
+dsMovies_dtm_freq_train
+dsMovies_dtm_freq_test
 ```
 
+```{r}
+converts_counts <- function(x){x <- ifelse(x>0,"Yes","No")}
+dsMovies_train <- apply(dsMovies_dtm_freq_train, MARGIN = 2, converts_counts)
+dsMovies_test <- apply(dsMovies_dtm_freq_test, MARGIN = 2, converts_counts)
+```
 
+##Naibe Bayes classification outputs.
+```{r}
+library(e1071)
+dsMovies_classifier <- naiveBayes(dsMovies_train,dsMovies_train_labels, laplace = 1)
+dsMovies_text_pred <- predict(dsMovies_classifier,dsMovies_test)
+
+```
+
+##Frequency Table.
+```{r}
+library(gmodels)
+CrossTable(dsMovies_text_pred,dsMovies_test_labels,prop.chisq = FALSE,prop.t = FALSE, dnn = c('predicted','actual'))
+
+```
