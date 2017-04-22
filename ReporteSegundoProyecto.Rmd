@@ -8,15 +8,16 @@ output: html_document
 
 ```{r setup, leer}
 knitr::opts_chunk$set(echo = TRUE)
-
-dsMovies <- read.table(file = 'dsMovies.csv', sep = '\t', header = TRUE)
-
+dsMovies <- read.table(file = 'movie-reviews-dataset.tsv', sep = '\t', header = TRUE)
+dsMovies <- read.csv("dsMovies.csv", stringsAsFactors = FALSE, header = TRUE)
 ```
 
 
 ```{r dsMovies}
 summary(dsMovies)
 str(dsMovies)
+head(dsMovies)
+tail(dsMovies)
 ```
 
 
@@ -24,11 +25,12 @@ str(dsMovies)
 library("tm")
 dsMovies <- VCorpus(VectorSource (dsMovies$text))
 print(dsMovies)
-inspect (dsMovies[1:2])
+inspect(dsMovies[1:2])
 ```
 
 ```{r, ver el primer mensaje}
 library("tm")
+print(dsMovies[[1]])
 as.character(dsMovies[[1]])
 ```
 
