@@ -9,7 +9,7 @@ output: html_document
 ```{r setup, leer}
 knitr::opts_chunk$set(echo = TRUE)
 dsMovies <- read.table(file = 'movie-reviews-dataset.tsv', sep = '\t', header = TRUE)
-dsMovies <- read.csv("dsMovies.csv", stringsAsFactors = FALSE, header = TRUE)
+#dsMovies <- read.csv("dsMovies.csv", stringsAsFactors = FALSE, header = TRUE)
 ```
 
 
@@ -23,7 +23,7 @@ tail(dsMovies)
 
 ```{r}
 library("tm")
-dsMovies <- VCorpus(VectorSource (dsMovies$text))
+dsMovies <- VCorpus(VectorSource (dsMovies$message))
 print(dsMovies)
 inspect(dsMovies[1:2])
 ```
@@ -50,13 +50,13 @@ as.character(dataset_corpus_clean[[1]])
 
 ```{r, remueve numeros}
 dataset_corpus_clean <- tm_map ( dataset_corpus_clean, removeNumbers)
-as.character(dataset[[5]])
+as.character(dsMovies[[5]])
 as.character(dataset_corpus_clean[[5]])
 ```
 
 ```{r, quitar stop words}
 stopwords()
 datset_corpus_clean <- tm_map ( dataset_corpus_clean, removeWords, stopwords())
-as.character(dataset[[1]])
+as.character(dsMovies[[1]])
 as.character(dataset_corpus_clean[[1]])
 ```
