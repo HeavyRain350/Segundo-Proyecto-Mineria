@@ -113,7 +113,7 @@ dsMovies_train <- apply(dsMovies_dtm_freq_train, MARGIN = 2, converts_counts)
 dsMovies_test <- apply(dsMovies_dtm_freq_test, MARGIN = 2, converts_counts)
 ```
 
-##Naibe Bayes classification outputs.
+##Naive Bayes classification outputs.
 ```{r}
 library(e1071)
 dsMovies_classifier <- naiveBayes(dsMovies_train,dsMovies_train_labels, laplace = 1)
