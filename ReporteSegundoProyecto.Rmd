@@ -6,13 +6,23 @@ date: "21 de abril de 2017"
 output: html_document
 ---
 
+## Step 1. Preparing the data!
+
+### We read the data with headers, and taking all data frame treated as just plain strings. We assigned this data into a variable "dsMovies"
 ```{r setup, leer}
 knitr::opts_chunk$set(echo = TRUE)
 #dsMovies <- read.table(file = 'movie-reviews-dataset.tsv', sep = '\t', header = TRUE)
 dsMovies <- read.csv("dsMovies.csv", stringsAsFactors = FALSE, header = TRUE)
 ```
 
+## Step 2. Checking dataset. 
 
+### First of all we make a summary of dataset which has a length of 10662 characters in "type" column, and in "message" column we have a length of 10662 characters.
+### We see the structure that has 10662 observable plain strings on 2 columns.
+### We show the first 6 records value of "type" column, and then another 6 records value of column message.
+### We show the last 6 records value of "type" column (from 10657 - 10662 rows), and then another last 6 records (from 10657 - 10662 rows) value of column message.
+### It's time to make factors the 2 values of column "type" which we have negateive or positive, this for the next step that is Preeproccesing.
+### For last, we show how many values for each factor, which we expect half, 5331 for negative and 5331 for positive.
 ```{r dsMovies}
 summary(dsMovies)
 str(dsMovies)
@@ -22,7 +32,10 @@ dsMovies$type <- factor(dsMovies$type)
 table(dsMovies$type)
 ```
 
-##Preprocessing
+## Step 3. Preprocessing
+
+### We load the library "tm" which holds the format VCorups of Text Documents, which create a volatile corpora.
+### Then we inspect "dsMoviesCorpus" and it has a content of 2 documents, which the First Plain Text document has a content of 33 characters, and in Second Plain Text document has 80 characters.
 ```{r}
 library("tm")
 dsMoviesCorpus <- VCorpus(VectorSource (dsMovies$message))
@@ -30,29 +43,45 @@ print(dsMoviesCorpus)
 inspect(dsMoviesCorpus[1:2])
 ```
 
+## Step 4. Checking the first message
+
+### We print the information of the "dmMoviesCorupes" (first message), the we convert into character to see the message in.
 ```{r, ver el primer mensaje}
 library("tm")
 print(dsMoviesCorpus[[1]])
 as.character(dsMoviesCorpus[[1]])
 ```
 
+## Step 5. Checking multiple messages
+
+### We print different messages for this we use the function "lapply" to transform in range of rows the messages and converts to character.
 ```{r, ver multiples mensajes}
 library("tm")
 lapply(dsMoviesCorpus[1:5], as.character)
 ```
 
+## Step 6. Transform to Lower Case. 
 
+### This is the preparation of the data set, in a formal way we call "CLEAN THE DATA", first we will transform all mssages to lowercase with the function tolower(), for checking we print with "as.character" function. Let's check the transformation by comparing a message in the original corpus in the transformed corpus. 
 ```{r, a minusculas}
 dsMovies_clean <- tm_map ( dsMoviesCorpus, content_transformer(tolower))
 as.character(dsMoviesCorpus[[1]])
 as.character(dsMovies_clean[[1]])
 ```
 
+## Step 7. Remove numbers 
+
+### This is the preparation of the data set, in a formal way we call "CLEAN THE DATA", here we will remove all numbers in the mssages using the function "content_transformer()", this is because removeNumbers() is built into tm along with several ther mapping function that do not need to be wraped. For checking we print with "as.character" function. Let's check the transformation by comparing a message in the original corpus in the transformed corpus. 
+
 ```{r, remueve numeros}
 dsMovies_clean <- tm_map ( dsMovies_clean, removeNumbers)
 as.character(dsMoviesCorpus[[6]])
 as.character(dsMovies_clean[[6]])
 ```
+
+## Step 8. Remove STOP WORDS
+
+### This is the preparation of the data set, in a formal way we call "CLEAN THE DATA", this taks is to remove filler words, this is before text analysis, and are words that it doesn't give valious information. We use function stopwords() the allow us to access various sets of stop words, in this case for "Spanish". We'll also use the tm_map() function to apply this mapping to the data, providing the stopwords() as parameters, in this way we could indicate the words we would like to remove. For checking we print with "as.character" function. Let's check the transformation by comparing a message in the original corpus in the transformed corpus. 
 
 ```{r, quitar stop words}
 #stopwords()
@@ -64,6 +93,9 @@ as.character(dsMovies_clean[[6]])
 as.character(dsMoviesCorpus[[1200]])
 as.character(dsMovies_clean[[1200]])
 ```
+## Step 9. Remove Punctuation
+
+### This is the preparation of the data set, in a formal way we call "CLEAN THE DATA", this taks is simply only removes any punctuation, like parenthesis, comas, ponts, etc. For checking we print with "as.character" function. Let's check the transformation by comparing a message in the original corpus in the transformed corpus.
 
 ```{r, quitar puntuaci??n}
 dsMovies_clean <- tm_map ( dsMovies_clean, removePunctuation)
@@ -71,6 +103,9 @@ as.character(dsMoviesCorpus[[6]])
 as.character(dsMovies_clean[[6]])
 ```
 
+## Step 10. Remove Spaces
+
+### This is the preparation of the data set, in a formal way we call "CLEAN THE DATA", here we remove reamining white spaces, using the funtion stripWhitespace(). For checking we print with "as.character" function. Let's check the transformation by comparing a message in the original corpus in the transformed corpus.
 
 ```{r, quitar espacios en blanco}
 dsMovies_clean <- tm_map ( dsMovies_clean, stripWhitespace)
@@ -78,12 +113,17 @@ as.character(dsMoviesCorpus[[1576]])
 as.character(dsMovies_clean[[1576]])
 ```
 
-## Preparar los datos
+## Step 11. Data Preparation for Analysis
+
+### We need to create a DocumentTermMatrix() that allows us to create a Document in Matrix using the function "DocumentTermMatrix()", well being more specific is a sparse matrix, which cells have a value of zero.
 ```{r, matriz esparcida}
 dsMovies_dtm <- DocumentTermMatrix (dsMovies_clean)
 dsMovies_dtm
 ```
 
+## Step 12. Creating training and test Datasets
+
+### Here its very simply we divide the data in 2 sections: 75 percent for training and 25 percent for testing.
 
 ```{r, separacion train test}
 dsMovies_dtm_train <- dsMovies_dtm[1:8530, ]
@@ -91,12 +131,18 @@ dsMovies_dtm_test <- dsMovies_dtm[8531:10662, ]
 dsMovies_train_labels <- dsMovies[1:8530,]$type
 dsMovies_test_labels <- dsMovies[8531:10662,]$type
 ```
+## Step 13. Visualizing text data
+
+### Here we can see the frequency at which words appear in text data, we use a wordcloud.
 
 ```{r, wordcloud}
 library("wordcloud")
 wordcloud(dsMovies_clean, min.freq = 50, random.order = FALSE)
 ```
 
+## Step 14. Creating indicator for Frequent Words
+
+### In this step we use the function findFreqTerms() to eliminate any word that appear less than about 0.1 percent in this case in both in frequ train and test datasets.
 
 ```{r, frequent words}
 dsMovies_freq_words <- findFreqTerms(dsMovies_dtm_train,50)
@@ -107,21 +153,29 @@ dsMovies_dtm_freq_train
 dsMovies_dtm_freq_test
 ```
 
+## Step 15. The Naive Bayes classifier need categorical data.
+
+### First, we categrize the data, because Naive Bayes needs it; we make a function the in the train and test dataset, to apply the converts_counts.
+
 ```{r}
 converts_counts <- function(x){x <- ifelse(x>0,"Yes","No")}
 dsMovies_train <- apply(dsMovies_dtm_freq_train, MARGIN = 2, converts_counts)
 dsMovies_test <- apply(dsMovies_dtm_freq_test, MARGIN = 2, converts_counts)
 ```
 
-##Naibe Bayes classification outputs.
+## Step 16. Naibe Bayes classification outputs.
+
+### We build a model on the train data, with the name of dsMovies classifier, and another with dsMovies predictions, that will return a vector of predicted class values or raw predicted probabilites depending upon the value of the type parameter.
 ```{r}
 library(e1071)
 dsMovies_classifier <- naiveBayes(dsMovies_train,dsMovies_train_labels, laplace = 1)
 dsMovies_text_pred <- predict(dsMovies_classifier,dsMovies_test)
 
 ```
+## Step 17. Frequency Table.
 
-##Frequency Table.
+### For the fnal step we evaluate our moel on useed data, we compare the predictions with true values.
+### Compare predictions vs real classes.
 ```{r}
 library(gmodels)
 CrossTable(dsMovies_text_pred,dsMovies_test_labels,prop.chisq = FALSE,prop.t = FALSE, dnn = c('predicted','actual'))
