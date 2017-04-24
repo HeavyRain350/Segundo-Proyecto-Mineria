@@ -151,10 +151,10 @@ wordcloud(dsMovies_clean, min.freq = 50, random.order = FALSE)
 
 ### Step 14. Creating indicator for Frequent Words
 
-##### In this step we use the function findFreqTerms() to eliminate any word that appear less than about 0.1 percent in this case in both in frequ train and test datasets.
+##### In this step we use the function findFreqTerms() to get which words appear more frequently in the whole datasets.
 
 ```{r, frequent words}
-dsMovies_freq_words <- findFreqTerms(dsMovies_dtm_train,50)
+dsMovies_freq_words <- findFreqTerms(dsMovies_dtm_train,20)
 str(dsMovies_freq_words)
 dsMovies_dtm_freq_train <- dsMovies_dtm_train[,dsMovies_freq_words]
 dsMovies_dtm_freq_test <- dsMovies_dtm_test[,dsMovies_freq_words]
@@ -181,7 +181,7 @@ dsMovies_test <- apply(dsMovies_dtm_freq_test, MARGIN = 2, converts_counts)
 
 ```{r}
 library(e1071)
-dsMovies_classifier <- naiveBayes(dsMovies_train,dsMovies_train_labels,laplace = 1)
+dsMovies_classifier <- naiveBayes(dsMovies_train,dsMovies_train_labels)
 dsMovies_text_pred <- predict(dsMovies_classifier,dsMovies_test)
 table(dsMovies_text_pred)
 ```
@@ -189,8 +189,32 @@ table(dsMovies_text_pred)
 
 ##### For the fnal step we evaluate our moel on useed data, we compare the predictions with true values.
 ##### Compare predictions vs real classes.
+##### This is the result with minimum 20 repetitions of each word in the reviews without laplace.
 ```{r}
 library(gmodels)
-CrossTable(dsMovies_text_pred,dsMovies_test_labels,prop.chisq = FALSE,prop.t = FALSE, dnn = c('predicted','actual'))
+#CrossTable(dsMovies_text_pred,dsMovies_test_labels,prop.chisq = FALSE,prop.t = FALSE, dnn = c('predicted','actual'))
+table(dsMovies_text_pred,dsMovies_test_labels)
 
 ```
+
+##### This is the result with minimum 20 repetitions of each word in the reviews with laplace smoothing.
+##### This smoothing is use to  handle cases where
+$P(X_i = x_i | Y = y) = 0$
+
+##### To avoid overfitting the data. This is to consider this data, if we don't do this, we will ignore the data with this particular case, and that is bad
+```{r}
+library(e1071)
+dsMovies_classifier <- naiveBayes(dsMovies_train,dsMovies_train_labels,laplace = 1)
+dsMovies_text_pred <- predict(dsMovies_classifier,dsMovies_test)
+table(dsMovies_text_pred)
+table(dsMovies_text_pred,dsMovies_test_labels)
+
+```
+
+###Comparative table without laplace
+<center>
+![](Images/NaiveBayes w-out laplace.png)
+
+###Comparative table with laplace
+<center>
+![](Images/NaiveBayes w laplace.png)
