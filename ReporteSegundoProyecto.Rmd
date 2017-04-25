@@ -39,6 +39,8 @@ barplot(table(dsMovies$type), xlab = "Quantity", ylab = "Type", horiz = TRUE, co
 
 ```
 
+
+
 ### Step 3. Preprocessing
 
 ##### We load the library "tm" which holds the format VCorups of Text Documents, which create a volatile corpora.
@@ -118,6 +120,7 @@ as.character(dsMovies_clean[[6]])
 dsMovies_clean <- tm_map ( dsMovies_clean, stripWhitespace)
 as.character(dsMoviesCorpus[[1576]])
 as.character(dsMovies_clean[[1576]])
+dsMovies_clean
 ```
 
 ### Step 11. Data Preparation for Analysis
@@ -125,7 +128,8 @@ as.character(dsMovies_clean[[1576]])
 ##### We need to create a DocumentTermMatrix() that allows us to create a Document in Matrix using the function "DocumentTermMatrix()", well being more specific is a sparse matrix, which cells have a value of zero.
 ```{r, matriz esparcida}
 dsMovies_dtm <- DocumentTermMatrix (dsMovies_clean)
-dsMovies_dtm
+
+str(dsMovies_dtm)
 ```
 
 ### Step 12. Creating training and test Datasets
@@ -142,11 +146,36 @@ prop.table(table(dsMovies_test_labels))
 ```
 ### Step 13. Visualizing text data
 
+```{r plotWords}
+
+library(dplyr)
+
+library(tidytext)
+library(tidyr)
+
+
+bing <- get_sentiments("bing")
+
+tidy_dsMovies <- dsMovies %>%
+  unnest_tokens(word, message)
+
+data("stop_words")
+dsMoviesCl <- tidy_dsMovies %>%
+  anti_join(stop_words)
+
+res = dsMoviesCl %>%
+  count(word, sort = TRUE)
+
+barplot(res[1:10,]$n, xlab = "Word", ylab = "Quantity", horiz = FALSE, col='#2999AD',names.arg=res[1:10,]$word, cex.names=0.7)
+res[1:10,]
+```
+
 ##### Here we can see the frequency at which words appear in text data, we use a wordcloud.
 
 ```{r, wordcloud}
 library("wordcloud")
 wordcloud(dsMovies_clean, min.freq = 50, random.order = FALSE)
+
 ```
 
 ### Step 14. Creating indicator for Frequent Words
