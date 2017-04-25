@@ -145,6 +145,16 @@ prop.table(table(dsMovies_test_labels))
 ```
 ### Step 13. Visualizing text data
 
+##### Here we can see the frequency at which words appear in text data, we use a wordcloud.
+
+```{r, wordcloud}
+library("wordcloud")
+wordcloud(dsMovies_clean, min.freq = 50, random.order = FALSE)
+
+```
+
+##### Those are the most common words in dataset, but ilustrated with a barplot
+
 ```{r plotWords}
 
 library(dplyr)
@@ -167,14 +177,6 @@ res = dsMoviesCl %>%
 
 barplot(res[1:10,]$n, xlab = "Word", ylab = "Quantity", horiz = FALSE, col='#2999AD',names.arg=res[1:10,]$word, cex.names=0.7)
 res[1:10,]
-```
-
-##### Here we can see the frequency at which words appear in text data, we use a wordcloud.
-
-```{r, wordcloud}
-library("wordcloud")
-wordcloud(dsMovies_clean, min.freq = 50, random.order = FALSE)
-
 ```
 
 ### Step 14. Creating indicator for Frequent Words
