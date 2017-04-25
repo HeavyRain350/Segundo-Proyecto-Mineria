@@ -34,7 +34,6 @@ table(dsMovies$type)
 
 ##### In the following graph we can observe the amount of positive and negative messages that we have in our dataset. We have 10662 messages in total, 5331 are positive and 5331 are negative.
 ```{r dsMoviesplot}
-table(dsMovies$type)
 barplot(table(dsMovies$type), xlab = "Quantity", ylab = "Type", horiz = TRUE, col='#2999AD')
 ```
 
@@ -83,8 +82,8 @@ as.character(dsMovies_clean[[1]])
 
 ```{r, remueve numeros}
 dsMovies_clean <- tm_map ( dsMovies_clean, removeNumbers)
-as.character(dsMoviesCorpus[[6]])
-as.character(dsMovies_clean[[6]])
+as.character(dsMoviesCorpus[[32]])
+as.character(dsMovies_clean[[32]])
 ```
 
 ### Step 8. Remove STOP WORDS
@@ -119,7 +118,6 @@ as.character(dsMovies_clean[[6]])
 dsMovies_clean <- tm_map ( dsMovies_clean, stripWhitespace)
 as.character(dsMoviesCorpus[[1576]])
 as.character(dsMovies_clean[[1576]])
-dsMovies_clean
 ```
 
 ### Step 11. Data Preparation for Analysis
@@ -236,7 +234,6 @@ $P(X_i = x_i | Y = y) = 0$
 library(e1071)
 dsMovies_classifier <- naiveBayes(dsMovies_train,dsMovies_train_labels,laplace = 1)
 dsMovies_text_pred <- predict(dsMovies_classifier,dsMovies_test)
-table(dsMovies_text_pred)
 table(dsMovies_text_pred,dsMovies_test_labels)
 
 ```
