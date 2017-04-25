@@ -36,7 +36,6 @@ table(dsMovies$type)
 ```{r dsMoviesplot}
 table(dsMovies$type)
 barplot(table(dsMovies$type), xlab = "Quantity", ylab = "Type", horiz = TRUE, col='#2999AD')
-
 ```
 
 ### Step 3. Preprocessing
