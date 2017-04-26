@@ -289,3 +289,13 @@ table(dsMovies_text_pred,dsMovies_test_labels)
 ###Comparative table with laplace
 <center>
 ![](Images/NaiveBayes w laplace.png)
+
+### Conclusions and Limitations
+#### Does the study generalize to other domains?
+#####  Yes, in fact Naive Bayes has been used in many other domains, for example in Medical Data Classification, for example in pattern recognition and image processing also for improving diagnostic speed and increasing the quality of medical treatment if we have a data set of determined symptoms and the disease is helpful to give a prediction of the illness for a result of a "good" or "bad" diagnosis. 
+
+#### Limitations
+##### There are some limitation in the dataset for example, we have a little portion of a dataset that is based in some reviews of some cinema critics, but we have ony a few portion of critics and it doesn't reflect an absolute truth review for a movie.
+
+#### Advantages
+##### This study reflects a good use of prediction with this dataset, we have a positive or negative review, we can use this to analyze personal opinions in different aspects of a book for example, but in general we can add more reviews of movies to the dataset and the accuracy of prediction wil maintain in the same level.
