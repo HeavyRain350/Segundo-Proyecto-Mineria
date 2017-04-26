@@ -1,7 +1,7 @@
 ---
 title: "Mini Project 2"
-author: Erik Mejia Hernandez - Julieta Guadalupe Rodriguez Ruíz - Adrian Homero Moreno
-  García
+author: Erik Mejia Hernandez - Julieta Guadalupe Rodriguez Ru?z - Adrian Homero Moreno
+  Garc?a
 date: "25 de abril de 2017"
 output: ioslides_presentation
 ---
@@ -18,7 +18,16 @@ We used a dataset of movies reviews, with 5331 positive reviews and 2332 negativ
 We used this dataset to predict if a new review is negative or positive with naive bayes.
 
 ## Index
-
+###### 1: The dataset.
+###### 2: Plot of reviews.
+###### 3: Preprocessing. 
+###### 4: The wordcloud of the clean dataset.
+###### 5: Barplot of most common words.
+###### 6: Visualizing text data.
+###### 7: List of most common words.
+###### 8: Naive Bayes.
+###### 9: Comparative table with laplace.
+###### 10: Conclusions, Limitations and Advantages.
 
 ## The dataset
 
@@ -160,6 +169,11 @@ res = dsMoviesCl %>%
 barplot(res[1:10,]$n, xlab = "Word", ylab = "Quantity", horiz = FALSE, col='#2999AD',names.arg=res[1:10,]$word, cex.names=0.7)
 ```
 
+## Visualizing text data (ggplot2)
+<center>
+![](Images/ggplot2.png)
+
+
 ## List of most common words
 ```{r listwords, echo=TRUE}
 res[1:10,]
@@ -219,3 +233,16 @@ table(dsMovies_text_pred,dsMovies_test_labels)
 ## Comparative table with laplace
 <center>
 ![](Images/NaiveBayes w laplace.png)
+
+
+## Conclusions
+#### Does the study generalize to other domains?
+#####  Yes, in fact Naive Bayes has been used in many other domains, for example in Medical Data Classification, for example in pattern recognition and image processing also for improving diagnostic speed and increasing the quality of medical treatment if we have a data set of determined symptoms and the disease is helpful to give a prediction of the illness for a result of a "good" or "bad" diagnosis. 
+
+## Limitations
+##### There are some limitation in the dataset for example, we have a little portion of a dataset that is based in some reviews of some cinema critics, but we have ony a few portion of critics and it doesn't reflect an absolute truth review for a movie.
+
+## Advantages
+##### This study reflects a good use of prediction with this dataset, we have a positive or negative review, we can use this to analyze personal opinions in different aspects of a book for example, but in general we can add more reviews of movies to the dataset and the accuracy of prediction wil maintain in the same level.
+
+#Thank You!

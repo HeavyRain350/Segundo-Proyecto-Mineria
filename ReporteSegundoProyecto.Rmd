@@ -1,12 +1,15 @@
 ---
 title: "ReporteSegundoProyecto"
-author: Erik Mejia Hernandez - Julieta Guadalupe Rodriguez Ruiz - Adrian Homero Moreno
-  Garc?a
+author: Erik Mejia Hernandez - Julieta Guadalupe Rodriguez Ruiz - Adrian Homero MorenoGarcia
 date: "21 de abril de 2017"
 output: html_document
 ---
 
 ### Step 1. Preparing the data!
+
+##### We used a dataset of movies reviews, with 5331 positive reviews and 2332 negative reviews, we get the dataset from a project of github where is use to practice data science with python.
+
+##### We used this dataset to predict if a new review is negative or positive with naive bayes.
 
 ##### We read the data with headers, and taking all data frame treated as just plain strings. We assigned this data into a variable "dsMovies"
 ```{r setup, leer}
@@ -17,7 +20,7 @@ dsMovies <- read.csv("dsMovies.csv", stringsAsFactors = FALSE, header = TRUE)
 
 ### Step 2. Checking dataset. 
 
-##### First of all we make a summary of dataset which has a length of 10662 characters in "type" column, and in "message" column we have a length of 10662 characters.
+##### First of all we make a summary of dataset which has a length of 7663 characters in "type" column, and in "message" column we have a length of 7663 characters.
 ##### We see the structure that has 7663 observable plain strings on 2 columns.
 ##### We show the first 6 records value of "type" column, and then another 6 records value of column message.
 ##### We show the last 6 records value of "type" column (from 7658 - 7663 rows), and then another last 6 records value of column message.
@@ -88,7 +91,7 @@ as.character(dsMovies_clean[[32]])
 
 ### Step 8. Remove STOP WORDS
 
-##### Remove stop words is to remove filler words, this is before text analysis, that wordsdoesn't give valious information about the meaning of the message. We use function stopwords(), that fuction allow us to access various sets of stop words, in this case for "Spanish" and the default one that (english). We'll also use the tm_map() function to apply this mapping to the data, providing the stopwords() as parameters, in this way we could indicate the words we would like to remove. For checking we print with "as.character" function. Let's check the transformation by comparing a message in the original corpus in the transformed corpus. 
+##### Remove stop words is to remove filler words, this is before text analysis, that wordsdoesn't give valious information about the meaning of the message. We use function stopwords(), that fuction allow us to access various sets of stop words, in this case for "Spanish" and the default one (english). We'll also use the tm_map() function to apply this mapping to the data, providing the stopwords() as parameters, in this way we could indicate the words we would like to remove. For checking we print with "as.character" function. Let's check the transformation by comparing a message in the original corpus in the transformed corpus. 
 
 ```{r, quitar stop words}
 #stopwords()
@@ -151,7 +154,7 @@ wordcloud(dsMovies_clean, min.freq = 40, random.order =TRUE)
 ```
 
 ##### Now we can observe the wordcloud of how often words appear only in negative messages.
-```{r, Palabras m??s significativas de los mensajes malos (bad)}
+```{r, Palabras negativas}
 bad <- subset(dsMovies, type=="negative")
 good <- subset(dsMovies, type =="positive")
 
@@ -159,7 +162,7 @@ wordcloud(bad$message, max.words = 80, scale = c(5, 0.5))
 ```
 
 ##### Now we can observe the wordcloud of how often words appear only in positive messages.
-```{r, Palabras m??s significativas de los mensajes malos (bad)}
+```{r, Palabras positivas}
 bad <- subset(dsMovies, type=="negative")
 good <- subset(dsMovies, type =="positive")
 
@@ -199,17 +202,15 @@ barplot(res[1:10,]$n, xlab = "Word", ylab = "Quantity", horiz = FALSE, col='#FF6
 res[1:10,]
 ```
 
-###### Let???s find a sentiment score for each word using the Bing lexicon, then count the number of positive and negative words in the messages.
+###### Lets find a sentiment score for each word using the Bing lexicon, then count the number of positive and negative words in the messages.
 ###### One advantage of having the data frame with both sentiment and word is that we can analyze word counts that contribute to each sentiment.
 ###### This can be shown visually, and we can pipe straight into ggplot2 because of the way we are consistently using tools built for handling tidy data frames.
-```{r, frequent words}
+```{r, frequent words ggplot}
 library(ggplot2)
 bing_word_counts <- tidy_dsMovies %>%
   inner_join(bing) %>%
   count(word, sentiment, sort = TRUE) %>%
   ungroup()
-
-bing_word_counts
 
 bing_word_counts %>%
   filter(n > 50) %>%
